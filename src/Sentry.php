@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Helhum\SentryTypo3;
 
+use GuzzleHttp\HandlerStack;
 use Helhum\SentryTypo3\Integration\BeforeEventListener;
 use Helhum\SentryTypo3\Integration\Typo3Integration;
 use Http\Adapter\Guzzle6\Client;
@@ -49,6 +50,13 @@ final class Sentry
         $options = array_replace($defaultOptions, $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sentry'] ?? []);
         unset($options['typo3_integrations']);
         $httpOptions = $GLOBALS['TYPO3_CONF_VARS']['HTTP'];
+        if (isset($httpOptions['handler']) && is_array($httpOptions['handler'])) {
+            $handlerStack = new HandlerStack();
+            foreach ($httpOptions['handler'] as $handler) {
+                $handlerStack->push($handler);
+            }
+            $httpOptions['handler'] = $handlerStack;
+        }
         $httpOptions['verify'] = filter_var($httpOptions['verify'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $httpOptions['verify'];
         $typo3HttpClient = Client::createWithConfig($httpOptions);
         $clientBuilder = ClientBuilder::create($options);

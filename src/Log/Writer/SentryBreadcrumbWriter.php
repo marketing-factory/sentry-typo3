@@ -22,10 +22,15 @@ class SentryBreadcrumbWriter extends AbstractWriter
 
     public function writeLog(LogRecord $record): WriterInterface
     {
+        $level = $record->getLevel();
+        if (!is_int($level)) {
+            $level = LogLevel::normalizeLevel($level);
+        }
+
         \Sentry\addBreadcrumb(
             Breadcrumb::fromArray(
                 [
-                    'level' => $this->getSeverityFromLevel($record->getLevel()),
+                    'level' => $this->getSeverityFromLevel($level),
                     'message' => $record->getMessage(),
                     'data' => $record->getData(),
                     'category' => $record->getComponent(),
