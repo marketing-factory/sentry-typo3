@@ -4,12 +4,12 @@ namespace Helhum\SentryTypo3;
 
 use Helhum\SentryTypo3\Integration\BeforeEventListener;
 use Helhum\SentryTypo3\Integration\Typo3Integration;
-use Http\Adapter\Guzzle6\Client;
 use Jean85\PrettyVersions;
 use PackageVersions\Versions;
 use Sentry\ClientBuilder;
 use Sentry\Integration\FatalErrorListenerIntegration;
 use Sentry\State\Hub;
+use Symfony\Component\HttpClient\HttpClient;
 
 final class Sentry
 {
@@ -48,9 +48,9 @@ final class Sentry
         ];
         $options = array_replace($defaultOptions, $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sentry'] ?? []);
         unset($options['typo3_integrations']);
-        $httpOptions = $GLOBALS['TYPO3_CONF_VARS']['HTTP'];
-        $httpOptions['verify'] = filter_var($httpOptions['verify'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $httpOptions['verify'];
-        $typo3HttpClient = Client::createWithConfig($httpOptions);
+        $defaultOptions = [];
+        $defaultOptions['verify_peer'] = filter_var($GLOBALS['TYPO3_CONF_VARS']['HTTP']['verify'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $GLOBALS['TYPO3_CONF_VARS']['verify'];
+        $typo3HttpClient = HttpClient::create($defaultOptions);
         $clientBuilder = ClientBuilder::create($options);
         $clientBuilder->setHttpClient($typo3HttpClient);
         Hub::getCurrent()->bindClient($clientBuilder->getClient());
