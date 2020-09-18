@@ -21,7 +21,7 @@
     "sentry/sentry": "^2.1",
     "http-interop/http-factory-guzzle": "^1.0",
     "symfony/http-client": "^4.3 | ^5.0",
-    "typo3/cms-core": "^9.5"
+    "typo3/cms-core": "^9.5 || ^10.4"
   },
   "autoload": {
     "psr-4": {
