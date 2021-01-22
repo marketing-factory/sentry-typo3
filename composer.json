@@ -18,10 +18,11 @@
     }
   ],
   "require": {
-    "sentry/sentry": "^2.1",
-    "http-interop/http-factory-guzzle": "^1.0",
-    "symfony/http-client": "^4.3 | ^5.0",
+    "sentry/sdk": "^3",
     "typo3/cms-core": "^9.5 || ^10.4"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-master"
   },
   "autoload": {
     "psr-4": {
