@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 namespace Helhum\SentryTypo3\Integration;
 
@@ -7,7 +8,7 @@ use Psr\Http\Message\UploadedFileInterface;
 use Sentry\Event;
 use Sentry\Exception\JsonException;
 use Sentry\Options;
-use Sentry\State\Hub;
+use Sentry\SentrySdk;
 use Sentry\Util\JSON;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
@@ -36,7 +37,7 @@ class RequestContext implements ContextInterface
     public function addToEvent(Event $event): void
     {
         $request = $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
-        $client = Hub::getCurrent()->getClient();
+        $client = SentrySdk::getCurrentHub()->getClient();
         if ($request === null || $client === null) {
             return;
         }
@@ -61,10 +62,10 @@ class RequestContext implements ContextInterface
             $requestData['cookies'] = $request->getCookieParams();
             $requestData['headers'] = $request->getHeaders();
 
-            $userContext = $event->getUserContext();
+            $user = $event->getUser();
 
-            if (null === $userContext->getIpAddress() && isset($serverParams['REMOTE_ADDR'])) {
-                $userContext->setIpAddress($serverParams['REMOTE_ADDR']);
+            if (null === $user->getIpAddress() && isset($serverParams['REMOTE_ADDR'])) {
+                $user->setIpAddress($serverParams['REMOTE_ADDR']);
             }
         } else {
             $requestData['headers'] = $this->removePiiFromHeaders($request->getHeaders());

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 namespace Helhum\SentryTypo3\Integration;
 
@@ -18,7 +19,7 @@ class BeforeEventListener
 
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sentry']['typo3_integrations'])) {
             $integrations = array_map(
-                function($className) {
+                function ($className) {
                     return new $className();
                 },
                 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sentry']['typo3_integrations']

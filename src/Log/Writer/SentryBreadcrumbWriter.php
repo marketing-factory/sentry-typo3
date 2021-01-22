@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 namespace Helhum\SentryTypo3\Log\Writer;
 
@@ -58,7 +59,7 @@ class SentryBreadcrumbWriter extends AbstractWriter
             case LogLevel::CRITICAL:
             case LogLevel::ALERT:
             case LogLevel::EMERGENCY:
-                return Breadcrumb::LEVEL_CRITICAL;
+                return Breadcrumb::LEVEL_FATAL;
             default:
                 return Breadcrumb::LEVEL_INFO;
         }

@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Helhum\SentryTypo3\Log\Writer;
 
 use Helhum\SentryTypo3\Sentry;
+use Sentry\Event;
+use Sentry\SentrySdk;
 use Sentry\Severity;
-use Sentry\State\Hub;
 use Sentry\State\Scope;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
@@ -35,12 +37,8 @@ class SentryWriter extends AbstractWriter
 
     public function writeLog(LogRecord $record): WriterInterface
     {
-        $hub = Hub::getCurrent();
+        $hub = SentrySdk::getCurrentHub();
         $hub->withScope(function (Scope $scope) use ($hub, $record) {
-            $payload = [
-                'level' => $this->getSeverityFromLevel(LogLevel::normalizeLevel($record->getLevel())),
-                'message' => $record->getMessage(),
-            ];
             $recordData = $record->getData();
             $exception = $recordData['exception'] ?? null;
             $fingerprint = $recordData['fingerprint'] ?? null;
@@ -80,7 +78,10 @@ class SentryWriter extends AbstractWriter
                 $scope->setExtra((string)$key, $value);
             }
             try {
-                $hub->captureEvent($payload);
+                $event = Event::createEvent();
+                $event->setLevel($this->getSeverityFromLevel(LogLevel::normalizeLevel($record->getLevel())));
+                $event->setMessage($record->getMessage());
+                $hub->captureEvent($event, null, $scope);
             } catch (\Throwable $e) {
                 // Avoid hard failure in case connection to sentry failed
                 if ($this->fallbackWriter) {
