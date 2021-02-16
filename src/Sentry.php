@@ -43,7 +43,7 @@ final class Sentry
                 getenv('TYPO3_PATH_APP'),
             ],
             'environment' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['environment'] ?? 'production',
-            'release' => PrettyVersions::getVersion(Versions::ROOT_PACKAGE_NAME)->getShortCommitHash(),
+            'release' => PrettyVersions::getVersion(Versions::rootPackageName())->getShortCommitHash(),
             'default_integrations' => false,
             'integrations' => [
                 new FatalErrorListenerIntegration(),

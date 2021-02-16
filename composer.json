@@ -18,6 +18,7 @@
     }
   ],
   "require": {
+    "ocramius/package-versions": "^2.1",
     "sentry/sdk": "^3",
     "typo3/cms-core": "^9.5 || ^10.4"
   },
